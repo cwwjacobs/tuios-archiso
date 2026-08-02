@@ -1,0 +1,57 @@
+name: Build TUIOS ISO
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-iso.yml"
+      - "scripts/**"
+      - "config/**"
+      - "reference/**"
+      - "README.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tuios-iso-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate repository inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -n scripts/build.sh
+          base64 -d reference/amazingTUI.zip.b64 > /tmp/amazingTUI.zip
+          unzip -t /tmp/amazingTUI.zip
+
+      - name: Build in privileged Arch container
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm --privileged \
+            -v "${PWD}:/workspace" \
+            -w /workspace \
+            archlinux:latest \
+            bash -lc 'pacman -Syu --noconfirm archiso base-devel git unzip && ./scripts/build.sh'
+
+      - name: Upload ISO and checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: tuios-archiso
+          path: |
+            out/*.iso
+            out/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
