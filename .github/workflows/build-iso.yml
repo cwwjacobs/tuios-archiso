@@ -27,10 +27,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate repository inputs
+      - name: Reassemble and validate repository inputs
         shell: bash
         run: |
           set -euo pipefail
+          cat reference/amazingTUI.zip.b64.part-* > reference/amazingTUI.zip.b64
           bash -n scripts/build.sh
           base64 -d reference/amazingTUI.zip.b64 > /tmp/amazingTUI.zip
           unzip -t /tmp/amazingTUI.zip
