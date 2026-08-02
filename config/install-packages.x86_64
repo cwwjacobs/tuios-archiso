@@ -1,0 +1,49 @@
+# Base system
+base
+linux-lts
+linux-firmware
+linux-firmware-nvidia
+amd-ucode
+intel-ucode
+
+# Boot, storage, and network
+systemd
+networkmanager
+openssh
+dosfstools
+e2fsprogs
+gptfdisk
+parted
+
+# Operator workstation
+sudo
+git
+base-devel
+python
+python-pip
+python-pipx
+python-rich
+python-textual
+nodejs
+npm
+tmux
+neovim
+nano
+bash-completion
+man-db
+man-pages
+texinfo
+
+# Daily CLI utilities
+curl
+wget
+jq
+ripgrep
+fd
+fzf
+less
+which
+rsync
+unzip
+zip
+7zip
